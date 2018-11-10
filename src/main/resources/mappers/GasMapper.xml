@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hsk.task.mapper.GasMapper" >
+
+  <select id="queryGasList" resultType="com.hsk.task.bean.GasInfo" parameterType="Map" >
+    SELECT
+		id,
+		infoNum,
+		name,
+		imgUrl,
+		type,
+			ROUND (
+				6378.138 * 2 * ASIN( 
+					SQRT(
+						POW(
+							SIN(
+								(
+									#{latitude} * PI() / 180 - latitude * PI() / 180
+								) / 2
+							),
+							2
+						) + COS(#{latitude} * PI() / 180) * COS(latitude * PI() / 180) * POW(
+							SIN(
+								(
+									#{longitude} * PI() / 180 - longitude * PI() / 180
+								) / 2
+							),
+							2
+						)
+					)
+				) * 1000
+			) AS distance,
+		address,
+		order_count,
+		price,
+		savePrice,
+		marketPrice,
+		latitude,
+		longitude,
+		shoots
+	FROM
+		gas_info
+		 	where
+		 		type = #{type}
+	<choose>
+        <when test="order==1">
+           	ORDER BY price-savePrice
+        </when>
+        <otherwise>
+            ORDER BY distance
+        </otherwise>
+    </choose>
+	LIMIT ${(page-1)*pagesize},${pagesize} 
+  </select>
+  
+  <select id="selectOilById" resultType="com.hsk.task.bean.GasInfo" parameterType="Map">
+  		select * FROM gas_info where infoNum= #{infoNum} and type = #{type}
+  </select>
+  
+  
+    <select id="queryGasPrices" resultType="Map" parameterType="String" >
+  		SELECT
+  		id,
+			case type
+		WHEN '0' then '92(93#)'
+		WHEN '1' then '95(97#)'
+		WHEN '2' then '98#'
+		WHEN '3' then '0#柴油'
+		WHEN '4' then '-10#柴油'
+		ELSE type END as type,
+			price,
+			savePrice
+		FROM
+			gas_info
+		WHERE
+			infoNum = #{infoNum}
+  	</select>
+  	
+  	<select id="queryOilTypes" resultType="Map" parameterType="String" >
+  		SELECT
+  			type
+		FROM
+			gas_info
+		WHERE
+			infoNum = #{infoNum}
+  	</select>
+  	
+  	<select id="selectGasByPhone" resultType="Map" parameterType="String">
+  		select * from gas_host where phone =#{phone}
+  	</select>
+  	
+  	<update id="updatePrice" parameterType="Map">
+  		UPDATE gas_info
+		SET price = #{price} 
+		where 
+		id = #{id}
+  	</update>
+  
+</mapper>

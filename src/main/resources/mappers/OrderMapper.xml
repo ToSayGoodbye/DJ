@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hsk.task.mapper.OrderMapper" >
+
+  <insert id="insertOrder" parameterType="Map" >
+    	INSERT INTO `gas_order` (
+			`info_id`,
+			`phone`,
+			`type`,
+			`shootNum`,
+			`real_price`,
+			`save_price`,
+			`insertDate`,
+			`time_end`,
+			`transaction_id`,
+			`bank_type`,
+			`out_trade_no`,
+			`openid`
+		)
+		VALUES
+			(
+			#{info_id},
+			#{phone},
+			#{type},
+			#{shootNum},
+			#{real_price},
+			#{save_price},
+			NOW(),
+			#{time_end},
+			#{transaction_id},
+			#{bank_type},
+			#{out_trade_no},
+			#{openid}
+			);
+  </insert>
+  
+  <select id="queryOrderList" resultType="com.hsk.task.bean.Order" parameterType="Map" >
+  		SELECT
+			go.`id`,
+			go.`info_id`,
+			go.`phone`,
+			go.`type`,
+			go.`shootNum`,
+			go.`real_price`,
+			go.`save_price`,
+			go.`insertDate`,
+			DATE_FORMAT(go.time_end,'%Y-%c-%d %h:%i:%s') AS time_end,
+			go.`transaction_id`,
+			go.`bank_type`,
+			go.`out_trade_no`,
+			go.`openid`, 
+			gi.`name`
+		FROM
+			gas_order go
+		LEFT JOIN gas_info gi ON go.info_id = gi.id
+		where go.phone = #{phone}
+		<if test="id!=null and id!='' and id != 0">
+		and	gi.id = #{id}
+		</if>
+		order by time_end desc
+		LIMIT ${(page-1)*pagesize},${pagesize} 
+  </select>
+  
+  <select id="selectBalance" resultType="String" parameterType="String" >
+  		select balance from gas_account where infoNum = #{infoNum}
+  </select>
+  
+  <update id="updateBalance" parameterType="Map">
+  		update gas_account
+		SET balance = balance + ${jine}
+		WHERE
+			infoNum = #{infoNum}
+  </update>
+  
+   <update id="addCount" parameterType="String">
+  		UPDATE gas_info
+		SET order_count = order_count + 1
+		WHERE
+			infoNum = #{infoNum}
+  </update>
+  
+  
+  <insert id="insertAccountFlow">
+	insert into gas_account_flow (infoNum,price,phone,insertTime) values
+	(#{infoNum},#{price},#{phone},now())
+  </insert>
+  
+</mapper>

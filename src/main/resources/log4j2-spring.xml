@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?> <configuration>
+    <Appenders>
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout charset="UTF-8" pattern="%d %p %C{1.} [%t] %m%n" />
+        </Console>
+
+         <RollingFile name="RollingFile" fileName="/opt/service/logs/douding.log"
+			filePattern="/opt/service/logs/douding-%d{yyyy-MM-dd}.log">
+			<PatternLayout pattern="%d %p %C{1.} [%t] %m%n"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1"/>
+			</Policies>
+		 </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <root level="info">
+            <AppenderRef ref="CONSOLE" />
+            <AppenderRef ref="RollingFile" />
+        </root>
+    </Loggers>
+</configuration>
