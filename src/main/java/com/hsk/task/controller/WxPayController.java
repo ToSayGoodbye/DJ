@@ -22,15 +22,19 @@ import org.jdom.JDOMException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
 import com.hsk.task.bean.Result;
+import com.hsk.task.bean.ResultEnum;
 import com.hsk.task.bean.WxAuth;
+import com.hsk.task.service.GasService;
 import com.hsk.task.service.OrderService;
 import com.hsk.task.utils.HttpRequest;
 import com.hsk.task.utils.MathUtil;
@@ -51,6 +55,9 @@ public class WxPayController {
 	
 	@Autowired
 	OrderService orderService;
+	
+	@Autowired
+	GasService gasService;
 	
 	@RequestMapping(value = "/getOpenid") 
 	@ApiOperation(value = "获取openid")
@@ -277,6 +284,7 @@ public class WxPayController {
 	               map.put("shootNum", attachs[3]);
 	               map.put("save_price", attachs[4]);
 	               map.put("openid", attachs[5]);
+	               map.put("infoNum", attachs[6]);
 
 	               Integer insertNum = orderService.insertOrder(map);//插入订单
 	               
@@ -352,11 +360,20 @@ public class WxPayController {
 	 * @param openid 用户openid
 	 * @param callback
 	 */
-	@RequestMapping(value = "/wxPaySome") 
+	@PostMapping(value = "/wxPaySome") 
 	@ApiOperation(value = "企业向个人转账")
+	@Transactional
 	public Result transferPay(HttpServletRequest request, HttpServletResponse response,
 			String openid,String infoNum,String jine,String phone) {
-		/*//业务判断 openid是否有收款资格
+		logger.info("用户：" + phone + "申请转账中..." + "金额："+jine);
+		if(Double.parseDouble(jine)<2){
+			return ResultUtil.error(-1, "最低提现金额为2元!");
+		}
+		
+		Map<String,String> gasInfoMap = new HashMap<String,String>();
+		
+		gasInfoMap = gasService.selectGasByPhone(phone);
+		
 		Map<String, String> restmap = null;
 		try {
 			Map<String, String> parm = new HashMap<String, String>();
@@ -367,8 +384,8 @@ public class WxPayController {
 			parm.put("openid", openid); //用户openid	
 			parm.put("check_name", "NO_CHECK"); //校验用户姓名选项 OPTION_CHECK
 			//parm.put("re_user_name", "安迪"); //check_name设置为FORCE_CHECK或OPTION_CHECK，则必填
-			parm.put("amount", "10"); //转账金额
-			parm.put("desc", "测试转账到个人"); //企业付款描述信息
+			parm.put("amount", (int)(Double.parseDouble(jine)*99)+""); //转账金额
+			parm.put("desc", "豆丁加油提现"); //企业付款描述信息
 			parm.put("spbill_create_ip", getIpAddr(request)); //Ip地址
 			
 			String prestr = PayUtil.createLinkString(parm);
@@ -379,20 +396,18 @@ public class WxPayController {
 			restmap = PayUtil.doXMLParse(restxml);
 		} catch (Exception e) {
 			e.printStackTrace();
+			return ResultUtil.error(ResultEnum.UNKNOWN_ERROR.getCode(), ResultEnum.UNKNOWN_ERROR.getMsg());
 		}
 
 		if ("SUCCESS".equals(restmap.get("result_code"))) {
-			logger.info("转账成功：" + restmap.get("err_code") + ":" + restmap.get("err_code_des"));
+			logger.info("用户：" + phone + "转账成功！" + "金额："+jine);
 			
-			Map<String, String> transferMap = new HashMap<>();
-			transferMap.put("partner_trade_no", restmap.get("partner_trade_no"));//商户转账订单号
-			transferMap.put("payment_no", restmap.get("payment_no")); //微信订单号
-			transferMap.put("payment_time", restmap.get("payment_time")); //微信支付成功时间
 		}else {
 			if (null != restmap) {
 				logger.info("转账失败：" + restmap.get("err_code") + ":" + restmap.get("err_code_des"));
 			}
-		}*/
+			return ResultUtil.error(-1, restmap.get("err_code_des"));
+		}
 		jine = '-' + jine;
 		
 		orderService.updateBalance(infoNum, jine);

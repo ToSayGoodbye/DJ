@@ -54,6 +54,8 @@ public class LoginController {
 		
 		logger.info(phone+"正在生成验证码"+code);
 		
+		sendMsg.execute(phone, code);
+		
 		return ResultUtil.success(code);
 	}
 	
@@ -122,7 +124,6 @@ public class LoginController {
 	@ApiOperation(value = "退出登陆")
 	public Result logout(HttpServletRequest request, String uuid) {
 		
-		//若KEY存在 返回成功
 		redisUtils.delete(uuid);
 		
 		return ResultUtil.success();

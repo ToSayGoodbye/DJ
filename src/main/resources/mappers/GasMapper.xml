@@ -91,9 +91,10 @@
   	
   	<update id="updatePrice" parameterType="Map">
   		UPDATE gas_info
-		SET price = #{price} 
-		where 
-		id = #{id}
+		SET price = #{price},
+		savePrice = #{saveprice} 
+		WHERE
+			id = #{id}
   	</update>
   
 </mapper>

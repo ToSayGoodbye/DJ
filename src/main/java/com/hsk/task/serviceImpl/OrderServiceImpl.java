@@ -1,6 +1,7 @@
 package com.hsk.task.serviceImpl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,22 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public int addCount(String infoNum) {
 		return orderMapper.addCount(infoNum);
+	}
+
+	@Override
+	public List queryJilu(String infoNum,String page,String pageSize) {
+		Map map = new HashMap();
+		map.put("page", Integer.valueOf(page));
+		map.put("pagesize", Integer.valueOf(pageSize));
+		map.put("infoNum", infoNum);
+		return orderMapper.queryJilu(map);
+	}
+
+	@Override
+	public List queryFiveOrder(String infoNum) {
+		Map map = new HashMap();
+		map.put("infoNum", infoNum);
+		return orderMapper.queryFiveOrder(map);
 	}
 
 }

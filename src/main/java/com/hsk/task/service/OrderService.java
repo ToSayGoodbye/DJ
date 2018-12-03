@@ -1,5 +1,6 @@
 package com.hsk.task.service;
 
+import java.util.List;
 import java.util.Map;
 
 public interface OrderService {
@@ -12,4 +13,8 @@ public interface OrderService {
 	int insertAccountFlow(String infoNum,String price,String phone);
 	
 	int addCount(String infoNum);
+	
+	List queryJilu(String infoNum,String page,String pageSize);
+	
+	List queryFiveOrder(String infoNum);
 }

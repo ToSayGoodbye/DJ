@@ -19,5 +19,8 @@ public interface OrderMapper {
 	
 	int addCount(String infoNum);
 	
+	List<Map> queryJilu(Map map);
+	
+	List<Map> queryFiveOrder(Map map);
 
 }

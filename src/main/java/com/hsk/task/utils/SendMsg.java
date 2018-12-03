@@ -25,7 +25,7 @@ public class SendMsg {
     {
         String tmpSmsContent = null;
         try{
-          tmpSmsContent = URLEncoder.encode("【未来商贸】登录验证码："+code+"，如非本人操作，请忽略此短信。", "UTF-8");
+          tmpSmsContent = URLEncoder.encode("【豆丁加油】登录验证码："+code+"，如非本人操作，请忽略此短信。", "UTF-8");
         }catch(Exception e){
         }
         String url = msg_baseUrl;

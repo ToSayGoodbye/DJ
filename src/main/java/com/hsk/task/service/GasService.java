@@ -16,7 +16,7 @@ public interface GasService {
 	
 	List<Map> queryGasPrices(String infoNum);
 	
-	int updatePrice(String id,String price);
+	int updatePrice(String id,String price,String saveprice);
 
 	List<Map> queryOilTypes(String infoNum);
 	

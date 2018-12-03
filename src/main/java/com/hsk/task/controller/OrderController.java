@@ -26,4 +26,18 @@ public class OrderController {
 		String balance = orderService.selectBalance(infoNum);
 		return ResultUtil.success(balance);
 	}
+	
+	@GetMapping("/queryJilu")
+	@ApiOperation(value = "查询提现记录")
+	public Result queryJilu(String infoNum,String page,String pageSize){
+		List list = orderService.queryJilu(infoNum,page,pageSize);
+		return ResultUtil.success(list);
+	}
+	
+	@GetMapping("/queryFiveOrder")
+	@ApiOperation(value = "查询近五条订单记录")
+	public Result queryFiveOrder(String infoNum){
+		List list = orderService.queryFiveOrder(infoNum);
+		return ResultUtil.success(list);
+	}
 }

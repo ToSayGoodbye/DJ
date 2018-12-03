@@ -44,7 +44,7 @@
 			go.`real_price`,
 			go.`save_price`,
 			go.`insertDate`,
-			DATE_FORMAT(go.time_end,'%Y-%c-%d %h:%i:%s') AS time_end,
+			DATE_FORMAT(go.time_end,'%Y-%c-%d %H:%i:%s') AS time_end,
 			go.`transaction_id`,
 			go.`bank_type`,
 			go.`out_trade_no`,
@@ -53,10 +53,15 @@
 		FROM
 			gas_order go
 		LEFT JOIN gas_info gi ON go.info_id = gi.id
-		where go.phone = #{phone}
-		<if test="id!=null and id!='' and id != 0">
-		and	gi.id = #{id}
-		</if>
+		where
+		<choose>
+			<when test="id!=null and id!='' and id != 0">
+				gi.infoNum = #{id}	
+			</when>
+			<otherwise>
+				go.phone = #{phone}
+			</otherwise>	
+		</choose>
 		order by time_end desc
 		LIMIT ${(page-1)*pagesize},${pagesize} 
   </select>
@@ -84,5 +89,31 @@
 	insert into gas_account_flow (infoNum,price,phone,insertTime) values
 	(#{infoNum},#{price},#{phone},now())
   </insert>
+  
+  <select id="queryJilu" resultType="Map" parameterType="Map" >
+  		SELECT
+			price,phone,DATE_FORMAT(insertTime,'%Y-%c-%d %H:%i:%s') AS insertTime
+		FROM
+			gas_account_flow
+		WHERE
+			infoNum = #{infoNum}  
+		ORDER BY
+			insertTime DESC
+		LIMIT ${(page-1)*pagesize},${pagesize} 
+  </select>
+  
+  <select id="queryFiveOrder" resultType="Map" parameterType="Map" >
+  		SELECT
+			go.phone,
+			go.real_price,
+			go.save_price,
+			DATE_FORMAT(go.insertDate,'%Y-%c-%d %H:%i:%s') AS insertDate
+		FROM
+			gas_order go
+		LEFT JOIN gas_info gi ON go.info_id = gi.id
+		where gi.infoNum = #{infoNum}
+		ORDER BY insertDate desc
+		limit 5
+  </select>
   
 </mapper>

@@ -6,15 +6,20 @@ import io.swagger.annotations.ApiOperation;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.hsk.task.bean.GasInfo;
 import com.hsk.task.bean.Result;
 import com.hsk.task.service.GasService;
+import com.hsk.task.utils.RedisUtils;
 import com.hsk.task.utils.ResultUtil;
 
 @RestController
@@ -26,18 +31,20 @@ public class GasController {
 	@Autowired
 	GasService gasService;
 	
+	@Resource
+	private RedisUtils redisUtils;
+	
 	@GetMapping("/queryGasList")
 	@ApiOperation(value = "首页查询油站列表")
 	public Result queryGasList(String page,String pagesize,String type,
 			String latitude,String longitude,String order){
-		List list = new ArrayList();
 		
+		List<GasInfo> list = new ArrayList<GasInfo>();
 		list = gasService.queryGasList(page, pagesize, type, latitude, longitude,order);
+		
 		return ResultUtil.success(list);
 	}
 	
-	@GetMapping("/queryOrderList")
-	@ApiOperation(value = "查询订单列表")
 	/**
 	 * 查询订单列表
 	 * @param page
@@ -46,6 +53,8 @@ public class GasController {
 	 * @param id 具体油站id
 	 * @return
 	 */
+	@GetMapping("/queryOrderList")
+	@ApiOperation(value = "查询订单列表")
 	public Result queryOrderList(String page,String pagesize,String phone,String id){
 		List list = new ArrayList();
 		if(id.equals("undefined")){
@@ -84,8 +93,8 @@ public class GasController {
 	
 	@GetMapping("/updatePrice")
 	@ApiOperation(value = "修改油价")
-	public Result updatePrice(String id,String price){
-		gasService.updatePrice(id,price);
+	public Result updatePrice(String id,String price,String saveprice){
+		gasService.updatePrice(id,price,saveprice);
 		return ResultUtil.success();
 	}
 	

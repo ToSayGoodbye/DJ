@@ -29,7 +29,7 @@ public class SslRequest {
 			*wxconfig.SSLCERT_PATH : 指向你的证书的绝对路径，带着证书去访问
 			*/
 			
-			FileInputStream instream = new FileInputStream(new File("C:\\wx\\1486874712_20181015_cert.p12"));//P12文件目录 
+			FileInputStream instream = new FileInputStream(new File("/opt/wx/1486874712_20181015_cert.p12"));//P12文件目录 
 			try { 
 			/** 
 			* 此处要改 

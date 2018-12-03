@@ -122,10 +122,11 @@ public class GasServiceImpl implements GasService {
 	}
 
 	@Override
-	public int updatePrice(String id, String price) {
+	public int updatePrice(String id, String price,String saveprice) {
 		Map map = new HashMap();
 		map.put("id", id);
 		map.put("price", price);
+		map.put("saveprice", saveprice);
 		return gasMapper.updatePrice(map);
 	}
 
