@@ -17,4 +17,6 @@ public interface GasMapper {
 	Map selectGasByPhone(String phone);
 	
 	List<Map> queryOilTypes(String infoNum);
+	
+	int insertUser(String phone);
 }

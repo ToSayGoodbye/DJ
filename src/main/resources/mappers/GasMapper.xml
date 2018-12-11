@@ -96,5 +96,14 @@
 		WHERE
 			id = #{id}
   	</update>
+  	
+  	<insert id="insertUser" parameterType="String">
+  		INSERT INTO `gas_user` ( `phone`, `loginTime`)
+		VALUES
+			(
+				#{phone},
+				now()
+			);
+  	</insert>
   
 </mapper>

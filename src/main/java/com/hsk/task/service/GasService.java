@@ -21,4 +21,6 @@ public interface GasService {
 	List<Map> queryOilTypes(String infoNum);
 	
 	Map selectGasByPhone(String phone);
+	
+	int insertUser(String phone);
 }

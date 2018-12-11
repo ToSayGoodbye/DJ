@@ -88,6 +88,8 @@ public class LoginController {
 			resultMap.put("oil", map);
 			resultMap.put("uuid", uuid);
 			
+			gasService.insertUser(phone);//插入登录表
+			
 			return ResultUtil.success(resultMap);
 		}else{//否则返回验证码过期
 			return ResultUtil.error(ResultEnum.CODE_ERROR.getCode(),

@@ -139,4 +139,9 @@ public class GasServiceImpl implements GasService {
 	public Map selectGasByPhone(String phone) {
 		return gasMapper.selectGasByPhone(phone);
 	}
+
+	@Override
+	public int insertUser(String phone) {
+		return gasMapper.insertUser(phone);
+	}
 }
