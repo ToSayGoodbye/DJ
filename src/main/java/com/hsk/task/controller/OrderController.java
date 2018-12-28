@@ -27,6 +27,13 @@ public class OrderController {
 		return ResultUtil.success(balance);
 	}
 	
+	@GetMapping("/selectJiangLi")
+	@ApiOperation(value = "查询奖励金")
+	public Result selectJiangLi(String phone){
+		String balance = orderService.selectJiangLi(phone);
+		return ResultUtil.success(balance);
+	}
+	
 	@GetMapping("/queryJilu")
 	@ApiOperation(value = "查询提现记录")
 	public Result queryJilu(String infoNum,String page,String pageSize){

@@ -13,6 +13,8 @@ public interface OrderMapper {
 	
 	String selectBalance(String infoNum);
 	
+	String selectJiangLi(String phone);
+	
 	int updateBalance(Map map);
 	
 	int insertAccountFlow(Map map);

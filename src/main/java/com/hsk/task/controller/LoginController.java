@@ -63,12 +63,13 @@ public class LoginController {
 	 * 登陆
 	 * @param request
 	 * @param phone
+	 * @param rePhone 邀请人手机号
 	 * @return
 	 */
 	@GetMapping("/login")
 	@ResponseBody
 	@ApiOperation(value = "登陆")
-	public Result login(HttpServletRequest request, String phone,String code) {
+	public Result login(HttpServletRequest request, String phone,String code,String rePhone) {
 		logger.info("用户："+phone+"使用验证码"+code+"，登录中。。。");
 		
 		String cacheCode = redisUtils.get(phone);//获取发送的验证码
@@ -88,7 +89,7 @@ public class LoginController {
 			resultMap.put("oil", map);
 			resultMap.put("uuid", uuid);
 			
-			gasService.insertUser(phone);//插入登录表
+			gasService.insertUser(phone,rePhone);//插入登录表
 			
 			return ResultUtil.success(resultMap);
 		}else{//否则返回验证码过期

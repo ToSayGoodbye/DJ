@@ -25,6 +25,11 @@ public class OrderServiceImpl implements OrderService {
 	public String selectBalance(String infoNum) {
 		return orderMapper.selectBalance(infoNum);
 	}
+	
+	@Override
+	public String selectJiangLi(String phone) {
+		return orderMapper.selectJiangLi(phone);
+	}
 
 	@Override
 	public int updateBalance(String infoNum, String jine) {

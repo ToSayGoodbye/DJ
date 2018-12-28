@@ -141,7 +141,10 @@ public class GasServiceImpl implements GasService {
 	}
 
 	@Override
-	public int insertUser(String phone) {
-		return gasMapper.insertUser(phone);
+	public int insertUser(String phone,String rePhone) {
+		Map map = new HashMap();
+		map.put("phone", phone);
+		map.put("rePhone", rePhone);
+		return gasMapper.insertUser(map);
 	}
 }

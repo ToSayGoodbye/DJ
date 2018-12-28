@@ -97,13 +97,20 @@
 			id = #{id}
   	</update>
   	
-  	<insert id="insertUser" parameterType="String">
-  		INSERT INTO `gas_user` ( `phone`, `loginTime`)
+  	<insert id="insertUser" parameterType="Map">
+		INSERT INTO gas_user (
+			phone,
+			loginTime,
+			lastLoginTime,
+			recommendPhone
+		)
 		VALUES
 			(
 				#{phone},
-				now()
-			);
+				NOW(),
+				NOW(),
+				#{rePhone}
+			) ON DUPLICATE KEY UPDATE lastLoginTime = NOW();
   	</insert>
   
 </mapper>

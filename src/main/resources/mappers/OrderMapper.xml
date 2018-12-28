@@ -70,6 +70,16 @@
   		select balance from gas_account where infoNum = #{infoNum}
   </select>
   
+   <select id="selectJiangLi" resultType="String" parameterType="String" >
+  		SELECT
+			SUM(go.real_price)
+		FROM
+			gas_order go
+		LEFT JOIN gas_user_copy gu ON go.phone = gu.recommendPhone
+		where gu.phone =#{phone}
+		and go.status = 0
+  </select>
+  
   <update id="updateBalance" parameterType="Map">
   		update gas_account
 		SET balance = balance + ${jine}

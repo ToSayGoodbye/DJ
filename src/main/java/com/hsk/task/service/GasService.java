@@ -22,5 +22,5 @@ public interface GasService {
 	
 	Map selectGasByPhone(String phone);
 	
-	int insertUser(String phone);
+	int insertUser(String phone,String rePhone);
 }

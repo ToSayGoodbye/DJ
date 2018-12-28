@@ -8,6 +8,8 @@ public interface OrderService {
 	
 	String selectBalance(String infoNum);
 	
+	String selectJiangLi(String phone);
+	
 	int updateBalance(String infoNum,String jine);
 	
 	int insertAccountFlow(String infoNum,String price,String phone);

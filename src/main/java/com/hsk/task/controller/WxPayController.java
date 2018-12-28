@@ -370,9 +370,9 @@ public class WxPayController {
 			return ResultUtil.error(-1, "最低提现金额为2元!");
 		}
 		
-		Map<String,String> gasInfoMap = new HashMap<String,String>();
-		
-		gasInfoMap = gasService.selectGasByPhone(phone);
+//		Map<String,String> gasInfoMap = new HashMap<String,String>();
+//		
+//		gasInfoMap = gasService.selectGasByPhone(phone);
 		
 		Map<String, String> restmap = null;
 		try {
@@ -411,6 +411,70 @@ public class WxPayController {
 		jine = '-' + jine;
 		
 		orderService.updateBalance(infoNum, jine);
+		
+		orderService.insertAccountFlow(infoNum, jine, phone);
+		
+		return ResultUtil.success();
+	}
+	
+	/**
+	 * 提现奖励
+	 * @param request
+	 * @param response
+	 * @param openid 用户openid
+	 * @param callback
+	 */
+	@PostMapping(value = "/wxPayRecommond") 
+	@ApiOperation(value = "提取奖励")
+	@Transactional
+	public Result transferPay2(HttpServletRequest request, HttpServletResponse response,
+			String openid,String infoNum,String jine,String phone) {
+		logger.info("用户：" + phone + "申请提现奖励中..." + "金额："+jine);
+		if(Double.parseDouble(jine)<5){
+			return ResultUtil.error(-1, "最低提现金额为5元!");
+		}
+		
+//		Map<String,String> gasInfoMap = new HashMap<String,String>();
+//		
+//		gasInfoMap = gasService.selectGasByPhone(phone);
+		
+		Map<String, String> restmap = null;
+		try {
+			Map<String, String> parm = new HashMap<String, String>();
+			parm.put("mch_appid", wxAuth.getAppId()); //公众账号appid
+			parm.put("mchid", wxAuth.getMch_id()); //商户号
+			parm.put("nonce_str", getRandomStringByLength(32)); //随机字符串
+			parm.put("partner_trade_no", getRandomStringByLength(8)); //商户订单号
+			parm.put("openid", openid); //用户openid	
+			parm.put("check_name", "NO_CHECK"); //校验用户姓名选项 OPTION_CHECK
+			//parm.put("re_user_name", "安迪"); //check_name设置为FORCE_CHECK或OPTION_CHECK，则必填
+			parm.put("amount", (int)(Double.parseDouble(jine)*100)+""); //转账金额
+			parm.put("desc", "豆丁加油提现"); //企业付款描述信息
+			parm.put("spbill_create_ip", getIpAddr(request)); //Ip地址
+			
+			String prestr = PayUtil.createLinkString(parm);
+			parm.put("sign", PayUtil.sign(prestr, wxAuth.getKey(),"utf-8"));
+
+			String restxml = SslRequest.doRefund("https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers", XmlUtil.xmlFormat(parm, false));
+			// 将解析结果存储在HashMap中   
+			restmap = PayUtil.doXMLParse(restxml);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResultUtil.error(ResultEnum.UNKNOWN_ERROR.getCode(), ResultEnum.UNKNOWN_ERROR.getMsg());
+		}
+
+		if ("SUCCESS".equals(restmap.get("result_code"))) {
+			logger.info("用户：" + phone + "提取成功！" + "金额："+jine);
+			
+		}else {
+			if (null != restmap) {
+				logger.info("转账失败：" + restmap.get("err_code") + ":" + restmap.get("err_code_des"));
+			}
+			return ResultUtil.error(-1, restmap.get("err_code_des"));
+		}
+		jine = '-' + jine;
+		
+//		orderService.updateBalance(infoNum, jine);
 		
 		orderService.insertAccountFlow(infoNum, jine, phone);
 		
